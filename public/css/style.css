@@ -1,0 +1,16 @@
+body {
+    background-color: #63e4a3;
+    font-family: 'Mali', cursive;
+    font-size: 1.2em;
+}
+
+h1, h2 {
+    color: white;
+    text-shadow: 1px -1px 11px black;
+    font-family: 'Acme', sans-serif;
+}
+
+a {
+    color: #36486b;
+    text-decoration: none;
+}
