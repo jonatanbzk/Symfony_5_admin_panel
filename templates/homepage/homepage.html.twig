@@ -1,25 +1,26 @@
 {% extends 'base.html.twig' %}
 
-
-{% block body %}
-<div id="dropdownMenuDiv">
-    <div class="btn-group right" id="dropdownMenuSubDiv">
-        <button type="button" class="btn btn-secondary btn-sm
-        dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false" id="dropdownMenuButton">
-            {{ app.user.username }}
-        </button>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="{{ path('settings') }}">Account
-                Settings</a>
-            <a class="dropdown-item" href="#">Download</a>
-            <a class="dropdown-item" href="{{
-            path('app_logout') }}">Logout</a>
+{% block dropmenu %}
+    <div id="dropdownMenuDiv">
+        <div class="btn-group right" id="dropdownMenuSubDiv">
+            <button type="button" class="btn btn-secondary btn-sm
+            dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" id="dropdownMenuButton">
+                {{ app.user.username }}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="{{ path('user_update',
+                    {id: app.user.id})
+                }}">Account
+                    Settings</a>
+                <a class="dropdown-item" href="#">Download</a>
+                <a class="dropdown-item" href="{{
+                path('app_logout') }}">Logout</a>
+            </div>
         </div>
     </div>
-</div>
-    <h1 class="text-center mt-5">MyOwnDictionary</h1>
-
+{% endblock %}
+{% block body %}
     <div class="container mt-4 text-center">
 
     </div>

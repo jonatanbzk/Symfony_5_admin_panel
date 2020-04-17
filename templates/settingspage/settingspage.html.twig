@@ -1,10 +1,48 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
+    <h1 class="text-center mt-5">MyOwnDictionary</h1>
 <div class="container mt-4 text-center">
+    <h2>Settings</h2>
 
-    <h1>Settings</h1>
+    {{ form_start(updateUserForm) }}
+        {{ form_row(updateUserForm.username) }}
+        {{ form_row(updateUserForm.email) }}
+        {{ form_label(updateUserForm.plainPassword, 'New Password') }}
+        {{ form_row(updateUserForm.plainPassword) }}
+        <button class="btn btn-primary mt-4 mb-5" id="btnLogout"
+                type="submit">
+            Update
+        </button>
+    {{ form_end(updateUserForm) }}
+
+    <form method="post" action="{{ path('user_delete', {id: app.user.id}) }}">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~
+        app.user.id) }}">
+        <button type="button" class="btn btn-sm btn-outline-danger"
+                data-toggle="modal"
+                data-target="#exampleModalCenter">Supprimer mon
+            compte</button>
+
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        Are you sure ? You are about to delete your account.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success"
+                                data-dismiss="modal">No, I don't want to
+                            delete my account</button>
+                        <button type="submit" class="btn
+                        btn-danger">Yes, I want to delete my account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
 
 </div>
 

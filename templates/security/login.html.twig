@@ -1,19 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1 class="text-center mt-5">MyOwnDictionary</h1>
 <div class="container mt-4 text-center">
     <form method="post">
-        {% if error is defined and error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
-
         <h2 class="mb-3 font-weight-normal">Please sign in</h2>
         <label for="inputUsername">Username</label>
         <input type="text" value="{{ last_username }}"

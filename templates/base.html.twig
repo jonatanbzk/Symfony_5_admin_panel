@@ -13,6 +13,31 @@
     {% endblock %}
 </head>
 <body>
+    {% block dropmenu %}{% endblock %}
+    <div class="container mt-4 text-center">
+        <h1 class="text-center mt-5">MyOwnDictionary</h1>
+    {% if error is defined and error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% if app.session.get('errorEmail') is defined and app.session.get
+            ('errorEmail') == 'true' %}
+            <a href="{{ path('resend_email') }}">Click here to
+                received a new
+                confirmation
+                email</a>
+        {% endif %}
+    {% endif %}
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+        {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
 {% block body %}{% endblock %}
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
