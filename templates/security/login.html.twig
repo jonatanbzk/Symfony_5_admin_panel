@@ -32,7 +32,9 @@
             Sign in
         </button>
     </form>
-    <p class="mt-5">Pas encore de compte MyOwnDictionary?</p>
+    <p class="mt-5">Don't you have an account on MyOwnDictionary ?</p>
     <a href="{{ path('app_register') }}">Register</a>
+    <p class="mt-5">Forgot your password ?</p>
+    <a href="{{ path('reset_password_mail') }}">Reset your password here !</a>
 </div>
 {% endblock %}

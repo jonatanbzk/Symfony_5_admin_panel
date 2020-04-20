@@ -25,7 +25,8 @@ class EmailVerification extends AbstractController
         $id = $routeParameters['id'];
         $code = $routeParameters['code'];
 
-        $repository = $this->getDoctrine()->getRepository(User::class);
+        $repository = $this->getDoctrine()->getRepository(
+            User::class);
         $user = $repository->find($id);
 
         if ($user != null and $user->getId() == $id and

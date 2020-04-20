@@ -12,20 +12,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 
 
-class UpdateUserFormType extends AbstractType
+class UpdateUserPasswordFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username')
-            ->add('email')
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
                 'options' => ['attr' => ['class' => 'password-field']],
-                'required' => false,
-                'first_options'  => ['label' => '(Leave 
-        blank if you don\'t wish to change it)'],
+                'required' => true,
+                'first_options' => ['label' => false],
                 'second_options' => ['label' => 'Repeat New Password'],
                 'mapped' => false,
                 'constraints' => [
@@ -36,20 +33,6 @@ class UpdateUserFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
-            ])
-        ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => User::class,
-        ]);
+            ]);
     }
 }
-
-
-
-
-
-

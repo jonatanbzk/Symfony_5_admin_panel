@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Controller\Mailer;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Form\ResetPasswordFormType;
 use App\Form\UpdateUserFormType;
+use App\Form\UpdateUserPasswordFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,6 +72,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/resend_email", name="resend_email")
+     * @param AuthenticationUtils $authenticationUtils
      * @param Mailer\Email $sendEmail
      * @return RedirectResponse
      */
@@ -89,6 +92,82 @@ class UserController extends AbstractController
         has been send');
         $this->session->set('errorEmail', '');
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+     * @Route("/reset_password_mail", name="reset_password_mail")
+     * @param Request $request
+     * @param Mailer\Email $sendEmail
+     * @return Response
+     */
+    public function resetPassword(Request $request, Mailer\Email
+$sendEmail)
+    {
+        $form = $this->createForm(ResetPasswordFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = $form->getData();
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $user = $repository->findOneBy(array('email' => $email));
+            if ($user != null) {
+                $subject = 'Reset password';
+                $name = $user->getUsername();
+                $email = $user->getEmail();
+                $link = 'http://127.0.0.1:8000/reset_password_form/' .
+                    $user->getId();
+                $sendEmail->index($subject, $name, $email, $link);
+                $this->addFlash('success', 'You will receive an 
+                email with instructions about how to reset your password');
+            } else {
+                $this->addFlash('danger', 'You don\'t have any 
+            account with this email adress');
+            }
+        }
+        return $this->render('resetpassword/passwordnew.html.twig', [
+            'resetpasswordForm' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/reset_password_form/{id}", name="reset_password_form")
+     * @param Request $request
+     * @return Response
+     */
+    public function resetPasswordForm(Request $request,
+                                      UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $form = $this->createForm(UpdateUserPasswordFormType::class);
+        $form->handleRequest($request);
+
+        $routeParameters = $request->attributes->get('_route_params');
+        $id = $routeParameters['id'];
+
+        $repository = $this->getDoctrine()->getRepository(
+            User::class);
+        $user = $repository->find($id);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!empty($form->get('plainPassword')->getData())) {
+                // encode the plain password
+                $user->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+
+            $this->addFlash('success', 'You updated your 
+            password successfully.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('resetpassword/passwordnew_form.html.twig', [
+            'user' => $user,
+            'updateUserForm' => $form->createView()
+        ]);
     }
 
     /**
