@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use App\Controller\Mailer;
 use App\Entity\User;
-use App\Form\RegistrationFormType;
-use App\Form\ResetPasswordFormType;
-use App\Form\UpdateUserFormType;
-use App\Form\UpdateUserPasswordFormType;
+use App\Form\User\RegistrationFormType;
+use App\Form\User\UpdateUserFormType;
+use App\Form\User\UpdateUserPasswordFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
@@ -54,77 +52,19 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
-            $subject = 'Hello';
+            $subject = 'Email verification';
+            $view = 'emails/registration.html.twig';
             $name = $user->getUsername();
             $email = $user->getEmail();
             $link = 'http://127.0.0.1:8000/activCode/' . $user->getId() .
                 '/' . $user->getActivationCode();
-            $sendEmail->index($subject, $name, $email, $link);
+            $sendEmail->index($subject, $name, $email, $view, $link);
             $this->addFlash('success', 'You have been 
             registered, please check your email');
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/resend_email", name="resend_email")
-     * @param AuthenticationUtils $authenticationUtils
-     * @param Mailer\Email $sendEmail
-     * @return RedirectResponse
-     */
-    public function reSendUserEmail(AuthenticationUtils $authenticationUtils,
-                                    Mailer\Email $sendEmail): Response
-    {
-        $username = $lastUsername = $authenticationUtils->getLastUsername();;
-        $repository = $this->getDoctrine()->getRepository(User::class);
-        $user = $repository->findOneBy(array('username' => $username));
-        $subject = 'Hello';
-        $name = $user->getUsername();
-        $email = $user->getEmail();
-        $link = 'http://127.0.0.1:8000/activCode/' . $user->getId() .
-            '/' . $user->getActivationCode();
-        $sendEmail->index($subject, $name, $email, $link);
-        $this->addFlash('success', 'An new verification email 
-        has been send');
-        $this->session->set('errorEmail', '');
-        return $this->redirectToRoute('homepage');
-    }
-
-    /**
-     * @Route("/reset_password_mail", name="reset_password_mail")
-     * @param Request $request
-     * @param Mailer\Email $sendEmail
-     * @return Response
-     */
-    public function resetPassword(Request $request, Mailer\Email
-$sendEmail)
-    {
-        $form = $this->createForm(ResetPasswordFormType::class);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form->getData();
-            $repository = $this->getDoctrine()->getRepository(User::class);
-            $user = $repository->findOneBy(array('email' => $email));
-            if ($user != null) {
-                $subject = 'Reset password';
-                $name = $user->getUsername();
-                $email = $user->getEmail();
-                $link = 'http://127.0.0.1:8000/reset_password_form/' .
-                    $user->getId();
-                $sendEmail->index($subject, $name, $email, $link);
-                $this->addFlash('success', 'You will receive an 
-                email with instructions about how to reset your password');
-            } else {
-                $this->addFlash('danger', 'You don\'t have any 
-            account with this email adress');
-            }
-        }
-        return $this->render('resetpassword/passwordnew.html.twig', [
-            'resetpasswordForm' => $form->createView(),
         ]);
     }
 
@@ -171,28 +111,6 @@ $sendEmail)
     }
 
     /**
-     * @Route("/settings/delete/{id}", name="user_delete", methods="DELETE")
-     * @param User $user
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function delete(User $user, Request $request)
-    {
-        if ($this->isCsrfTokenValid
-        ('delete' . $user->getId(), $request->get('_token'))) {
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($user);
-            $entityManager->flush();
-
-            // necessary to redirect
-            $this->get('security.token_storage')->setToken(null);
-            $request->getSession()->invalidate();
-        }
-        return $this->redirectToRoute('app_logout');
-    }
-
-    /**
      * @Route("/settings/{id}", name="user_update", methods="GET|POST")
      * @param User $user
      * @param Request $request
@@ -215,10 +133,8 @@ $sendEmail)
                 );
             }
             $entityManager = $this->getDoctrine()->getManager();
-            //      $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
             $this->addFlash('success', 'You updated your account
              successfully.');
 
@@ -230,4 +146,55 @@ $sendEmail)
             'updateUserForm' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/activCode/{id}/{code}", name="activCode")
+     * @param Request $request
+     * @return Response
+     */
+    public function emailValidation(Request $request): Response
+    {
+        $routeParameters = $request->attributes->get('_route_params');
+        $id = $routeParameters['id'];
+        $code = $routeParameters['code'];
+
+        $repository = $this->getDoctrine()->getRepository(
+            User::class);
+        $user = $repository->find($id);
+
+        if ($user != null and $user->getId() == $id and
+            $user->getActivationCode() == $code) {
+            $user->setEmailValid(true);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
+            $this->addFlash('success', 'Your email is now validated');
+
+        } else {
+            $this->addFlash('danger', 'You don\'t have any account');;
+        }
+        return $this->redirectToRoute('app_login');
+    }
+
+    /**
+     * @Route("/settings/delete/{id}", name="user_delete", methods="DELETE")
+     * @param User $user
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function delete(User $user, Request $request)
+    {
+        if ($this->isCsrfTokenValid
+        ('delete' . $user->getId(), $request->get('_token'))) {
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            // necessary to redirect
+            $this->get('security.token_storage')->setToken(null);
+            $request->getSession()->invalidate();
+        }
+        return $this->redirectToRoute('app_logout');
+    }
+
 }
