@@ -1,62 +1,8 @@
 body {
-    background-color: #63e4a3;
-    font-family: 'Mali', cursive;
     font-size: 1.2em;
-    color: #36486b;;
-}
-
-h1, h2 {
-    color: white;
-    text-shadow: 1px -1px 11px black;
-    font-family: 'Acme', sans-serif;
-}
-
-a {
-    color: darkgreen;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: none;
-    color: #0b2e13;
 }
 
 input, select, text {
     margin: auto;
     max-width: 15em;
 }
-
-#btnRegister, #btnLogout {
-    background-color: #4caf51;
-    border: none;
-    box-shadow: none;
-}
-
-#btnRegister:hover, #btnLogout:hover{
-    background-color: #3e8e38;
-}
-
-#btnRegister:active:focus, #btnLogout:active:focus {
-    transform: translateY(2px)
-}
-
-.form-control:focus{
-    box-shadow: 0 0 0 .2rem #4caf51;
-}
-
-#dropdownMenuDiv {
-    width: 100%;
-    display: flex;
-    justify-content: end;
-}
-
-#dropdownMenuSubDiv {
-    margin: 1em;
-}
-
-#dropdownMenuButton {
-    background-color: #3e8e38;
-    border: none;
-    box-shadow: none;
-}
-

@@ -44,7 +44,7 @@ class Email extends AbstractController
     public function index($subject, $name, $email, $view, $link)
     {
         $message = (new \Swift_Message($subject))
-            ->setFrom('myowndictionaryinfo@gmail.com')
+            ->setFrom('senderEmail@domain.com') //TODO : change email
             ->setTo($email)
             ->setBody(
                 $this->renderView(

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}MyOwnDictionary{% endblock %}</title>
+    <title>{% block title %}Page Title{% endblock %}</title>
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
@@ -15,7 +15,7 @@
 <body>
     {% block dropmenu %}{% endblock %}
     <div class="container mt-4 text-center">
-        <h1 class="text-center mt-5">MyOwnDictionary</h1>
+        <h1 class="text-center mt-5">Website Name</h1>
     {% if error is defined and error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% if app.session.get('errorEmail') is defined and app.session.get
