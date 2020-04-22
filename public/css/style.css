@@ -6,3 +6,7 @@ input, select, text {
     margin: auto;
     max-width: 15em;
 }
+
+#dropdownMenuSubDiv {
+    margin: 1em;
+}
