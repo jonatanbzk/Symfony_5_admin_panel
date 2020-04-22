@@ -24,22 +24,22 @@ ___
 <img src="screenshot/loginPage.png" width="400">
 A landing page, allowing a user to log in to the admin panel.
 
-<br/>
+<br/><br/>
 
 <img src="screenshot/registerPage.png" width="400">
 A registration page, where future users can create their accounts.
 
-<br/>
+<br/><br/>
 
 <img src="screenshot/resetPasswordPage.png" width="400">
 A page to reset the user's password.
 
-<br/>
+<br/><br/>
 
 <img src="screenshot/homePage.png" width="400">
 A home page where users are redirected after login.
 
-<br/>
+<br/><br/>
 
 <img src="screenshot/settingsPage.png" width="400">
 A setting page, allowing a user to update own e-mail address and / or password.
